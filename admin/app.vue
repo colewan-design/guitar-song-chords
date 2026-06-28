@@ -5,11 +5,7 @@
       <div class="max-w-7xl mx-auto px-6 h-16 flex items-center gap-6">
         <!-- Logo -->
         <NuxtLink to="/" class="flex items-center gap-2 shrink-0">
-          <div class="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
-            <svg class="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M9 3v10.55A4 4 0 1 0 11 17V7h4V3H9z"/>
-            </svg>
-          </div>
+          <img src="/icon.png" class="w-8 h-8" alt="Guitar Songs Chords" />
           <span class="font-bold text-lg tracking-tight text-white">Guitar Songs Chords</span>
         </NuxtLink>
 

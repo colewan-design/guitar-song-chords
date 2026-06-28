@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
-  View, Text, FlatList, TextInput,
+  View, Text, FlatList, TextInput, ScrollView,
   TouchableOpacity, StyleSheet, StatusBar,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -33,23 +33,57 @@ function SongCard({ song, onPress, onFav, fav }) {
   );
 }
 
-export default function DiscoverScreen({ navigation }) {
+export default function DiscoverScreen({ navigation, route }) {
   const [query, setQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
+
+  useEffect(() => {
+    if (route.params?.initialCategory) {
+      setActiveCategory(route.params.initialCategory);
+    }
+  }, [route.params?.initialCategory]);
   const { toggle, isFavourite } = useFavourites();
-  const { songs, categories } = useSongs();
+  const { songs, categories, loading } = useSongs();
+
+  const safeSongs = useMemo(
+    () => (Array.isArray(songs) ? songs.filter((song) => song && song.id) : []),
+    [songs]
+  );
+  const safeCategories = useMemo(
+    () => {
+      const normalized = (Array.isArray(categories) ? categories : []).filter(
+        (category) => typeof category === 'string' && category.trim() && category !== 'All'
+      );
+      return ['All', ...new Set(normalized)];
+    },
+    [categories]
+  );
 
   const filtered = useMemo(() => {
-    let result = songs;
+    let result = safeSongs;
     if (activeCategory !== 'All') result = result.filter((s) => s.category === activeCategory);
     const q = query.toLowerCase().trim();
     if (q) result = result.filter((s) =>
       s.title.toLowerCase().includes(q) ||
       s.artist.toLowerCase().includes(q) ||
-      s.chords.some((c) => c.toLowerCase().includes(q))
+      (s.chords || []).some((c) => c.toLowerCase().includes(q))
     );
     return result;
-  }, [songs, query, activeCategory]);
+  }, [safeSongs, query, activeCategory]);
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <StatusBar barStyle="light-content" backgroundColor="#0f0800" />
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Discover</Text>
+          <View style={styles.headerMeta}>
+            <Text style={styles.headerSub}>Loading songs...</Text>
+          </View>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -83,14 +117,10 @@ export default function DiscoverScreen({ navigation }) {
       </View>
 
       <View style={styles.catRow}>
-        <FlatList
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          data={categories}
-          keyExtractor={(c) => c}
-          contentContainerStyle={{ paddingHorizontal: 20, gap: 8 }}
-          renderItem={({ item }) => (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.catContent}>
+          {safeCategories.map((item) => (
             <TouchableOpacity
+              key={item}
               onPress={() => setActiveCategory(item)}
               style={[styles.catChip, activeCategory === item && styles.catChipActive]}
             >
@@ -98,8 +128,8 @@ export default function DiscoverScreen({ navigation }) {
                 {item}
               </Text>
             </TouchableOpacity>
-          )}
-        />
+          ))}
+        </ScrollView>
       </View>
 
       <FlatList
@@ -110,7 +140,7 @@ export default function DiscoverScreen({ navigation }) {
         renderItem={({ item }) => (
           <SongCard
             song={item}
-            onPress={() => navigation.navigate('Song', { song: item })}
+            onPress={() => navigation.navigate('Song', { songId: item.id })}
             onFav={() => toggle(item)}
             fav={isFavourite(item.id)}
           />
@@ -154,6 +184,7 @@ const styles = StyleSheet.create({
   searchInput: { flex: 1, fontSize: 14, color: '#fff' },
 
   catRow: { marginBottom: 8 },
+  catContent: { paddingHorizontal: 20, gap: 8 },
   catChip: {
     borderRadius: 20, paddingHorizontal: 16, paddingVertical: 8,
     backgroundColor: '#1e1005', borderWidth: 1, borderColor: '#2a1a0a',

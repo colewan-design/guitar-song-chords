@@ -3,11 +3,7 @@
     <div class="w-full max-w-sm">
       <!-- Logo -->
       <div class="flex items-center justify-center gap-2 mb-8">
-        <div class="w-9 h-9 bg-accent rounded-xl flex items-center justify-center">
-          <svg class="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M9 3v10.55A4 4 0 1 0 11 17V7h4V3H9z"/>
-          </svg>
-        </div>
+        <img src="/icon.png" class="w-9 h-9" alt="Guitar Songs Chords" />
         <span class="font-bold text-xl tracking-tight text-white">Guitar Songs Chords</span>
       </div>
 

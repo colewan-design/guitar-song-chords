@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, StatusBar, Switch } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, StatusBar, Switch, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSongs } from '../context/SongsContext';
 
 function SettingRow({ icon, label, value, onPress, toggle, toggled }) {
   return (
@@ -29,6 +30,7 @@ function SettingRow({ icon, label, value, onPress, toggle, toggled }) {
 export default function SettingsScreen({ navigation }) {
   const [darkMode, setDarkMode] = React.useState(true);
   const [autoScroll, setAutoScroll] = React.useState(false);
+  const { sync, syncing } = useSongs();
 
   return (
     <View style={styles.container}>
@@ -61,6 +63,16 @@ export default function SettingsScreen({ navigation }) {
       <Text style={styles.groupLabel}>APP</Text>
       <View style={styles.group}>
         <SettingRow icon="add-circle" label="Add Song" onPress={() => navigation.navigate('AddSong')} />
+        <View style={styles.divider} />
+        <TouchableOpacity style={styles.row} onPress={sync} disabled={syncing} activeOpacity={0.7}>
+          <View style={styles.rowIcon}>
+            <Ionicons name="sync" size={18} color="#d4873c" />
+          </View>
+          <Text style={styles.rowLabel}>Sync Library</Text>
+          {syncing
+            ? <ActivityIndicator size="small" color="#d4873c" />
+            : <Ionicons name="chevron-forward" size={16} color="#333" />}
+        </TouchableOpacity>
         <View style={styles.divider} />
         <SettingRow icon="information-circle" label="About" />
         <View style={styles.divider} />

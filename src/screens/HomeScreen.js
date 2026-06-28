@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity,
   StyleSheet, StatusBar, Dimensions,
@@ -6,6 +6,23 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useSongs } from '../context/SongsContext';
+
+const CATEGORY_STYLE = {
+  Gospel:       { colors: ['#5C1A00', '#1A0800'], icon: 'heart' },
+  Folk:         { colors: ['#1A1A5C', '#08081A'], icon: 'leaf' },
+  OPM:          { colors: ['#005C1A', '#001A08'], icon: 'flag' },
+  Imported:     { colors: ['#2C1A5C', '#0A0818'], icon: 'globe' },
+  Pop:          { colors: ['#5C005C', '#1A001A'], icon: 'musical-notes' },
+  Rock:         { colors: ['#3A0000', '#1A0000'], icon: 'flash' },
+  Country:      { colors: ['#3A2200', '#1A1000'], icon: 'sunny' },
+  Jazz:         { colors: ['#001A3A', '#000A1A'], icon: 'cafe' },
+  Classical:    { colors: ['#1A1A00', '#0A0A00'], icon: 'ribbon' },
+  Default:      { colors: ['#1a0e05', '#0f0800'], icon: 'musical-note' },
+};
+
+function getCategoryStyle(cat) {
+  return CATEGORY_STYLE[cat] || CATEGORY_STYLE.Default;
+}
 
 const { width } = Dimensions.get('window');
 const CARD_W = width - 48;
@@ -17,6 +34,19 @@ const STORIES = [
   { id: '4', name: 'Sam', icon: 'person' },
   { id: '5', name: 'Chris', icon: 'person' },
 ];
+
+function CategoryCard({ category, count, onPress }) {
+  const { colors, icon } = getCategoryStyle(category);
+  return (
+    <TouchableOpacity onPress={onPress} activeOpacity={0.8} style={styles.catCard}>
+      <LinearGradient colors={colors} style={styles.catCardGradient}>
+        <Ionicons name={icon} size={28} color="rgba(255,255,255,0.25)" style={styles.catCardIcon} />
+        <Text style={styles.catCardName}>{category}</Text>
+        <Text style={styles.catCardCount}>{count} songs</Text>
+      </LinearGradient>
+    </TouchableOpacity>
+  );
+}
 
 function TrendingCard({ song, onPress }) {
   return (
@@ -57,7 +87,7 @@ function FeaturedCard({ song, onPress }) {
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.85} style={styles.featuredCard}>
       <LinearGradient colors={song.gradient} style={styles.featuredGradient}>
-        <Ionicons name="guitar-sharp" size={40} color="rgba(255,255,255,0.15)" style={styles.featuredIcon} />
+        <Ionicons name="musical-notes" size={40} color="rgba(255,255,255,0.15)" style={styles.featuredIcon} />
         <View style={styles.featuredInfo}>
           <Text style={styles.featuredLabel}>Featured Song</Text>
           <Text style={styles.featuredTitle}>{song.title}</Text>
@@ -72,9 +102,56 @@ function FeaturedCard({ song, onPress }) {
 }
 
 export default function HomeScreen({ navigation }) {
-  const { songs } = useSongs();
+  const { songs, categories, loading } = useSongs();
   const trending = songs.slice(0, 2);
   const featured = songs[2] || songs[0];
+
+  const categorycounts = useMemo(() => {
+    const counts = {};
+    for (const s of songs) {
+      if (s.category) counts[s.category] = (counts[s.category] || 0) + 1;
+    }
+    return counts;
+  }, [songs]);
+
+  const browseCategories = useMemo(
+    () => categories.filter((c) => c !== 'All'),
+    [categories]
+  );
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <StatusBar barStyle="light-content" backgroundColor="#0f0800" />
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.headerGreeting}>Good evening</Text>
+            <Text style={styles.headerTitle}>Guitar Chords</Text>
+          </View>
+        </View>
+        <View style={styles.emptyState}>
+          <Text style={styles.emptyTitle}>Loading your song library...</Text>
+        </View>
+      </View>
+    );
+  }
+
+  if (!featured) {
+    return (
+      <View style={styles.container}>
+        <StatusBar barStyle="light-content" backgroundColor="#0f0800" />
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.headerGreeting}>Good evening</Text>
+            <Text style={styles.headerTitle}>Guitar Chords</Text>
+          </View>
+        </View>
+        <View style={styles.emptyState}>
+          <Text style={styles.emptyTitle}>No songs in the library yet.</Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -119,13 +196,13 @@ export default function HomeScreen({ navigation }) {
           <TrendingCard
             key={song.id}
             song={song}
-            onPress={() => navigation.navigate('Song', { song })}
+            onPress={() => navigation.navigate('Song', { songId: song.id })}
           />
         ))}
 
         {/* Featured */}
         <Text style={styles.sectionTitle}>Made for You</Text>
-        <FeaturedCard song={featured} onPress={() => navigation.navigate('Song', { song: featured })} />
+        <FeaturedCard song={featured} onPress={() => navigation.navigate('Song', { songId: featured.id })} />
 
         {/* Quick picks */}
         <View style={styles.sectionHeader}>
@@ -138,7 +215,7 @@ export default function HomeScreen({ navigation }) {
           <TouchableOpacity
             key={song.id}
             style={styles.quickRow}
-            onPress={() => navigation.navigate('Song', { song })}
+            onPress={() => navigation.navigate('Song', { songId: song.id })}
             activeOpacity={0.75}
           >
             <LinearGradient colors={song.gradient} style={styles.quickThumb}>
@@ -151,6 +228,21 @@ export default function HomeScreen({ navigation }) {
             <Ionicons name="chevron-forward" size={18} color="#555" />
           </TouchableOpacity>
         ))}
+
+        {/* Browse by Category */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Browse by Category</Text>
+        </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.catCardRow}>
+          {browseCategories.map((cat) => (
+            <CategoryCard
+              key={cat}
+              category={cat}
+              count={categorycounts[cat] || 0}
+              onPress={() => navigation.navigate('Discover', { initialCategory: cat })}
+            />
+          ))}
+        </ScrollView>
 
       </ScrollView>
     </View>
@@ -175,6 +267,13 @@ const styles = StyleSheet.create({
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, marginTop: 24, marginBottom: 12 },
   sectionTitle: { fontSize: 18, fontWeight: '700', color: '#fff', paddingHorizontal: 20, marginTop: 24, marginBottom: 12 },
   seeAll: { fontSize: 13, color: '#d4873c', fontWeight: '600' },
+
+  catCardRow: { paddingHorizontal: 20, paddingBottom: 8, gap: 12 },
+  catCard: { width: 130, borderRadius: 16, overflow: 'hidden' },
+  catCardGradient: { height: 100, padding: 14, justifyContent: 'flex-end' },
+  catCardIcon: { position: 'absolute', top: 10, right: 10 },
+  catCardName: { fontSize: 14, fontWeight: '800', color: '#fff', marginBottom: 2 },
+  catCardCount: { fontSize: 11, color: 'rgba(255,255,255,0.5)', fontWeight: '600' },
 
   storiesRow: { marginBottom: 4 },
   storiesContent: { paddingHorizontal: 20, gap: 16 },
@@ -217,4 +316,6 @@ const styles = StyleSheet.create({
   quickInfo: { flex: 1 },
   quickTitle: { fontSize: 15, fontWeight: '700', color: '#fff' },
   quickArtist: { fontSize: 12, color: '#666', marginTop: 2 },
+  emptyState: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 },
+  emptyTitle: { fontSize: 18, fontWeight: '700', color: '#fff', textAlign: 'center' },
 });

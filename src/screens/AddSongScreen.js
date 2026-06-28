@@ -38,8 +38,9 @@ export default function AddSongScreen({ navigation }) {
   const [difficulty, setDifficulty] = useState('Beginner');
   const [category, setCategory] = useState('');
   const [sheetText, setSheetText] = useState('');
+  const [saving, setSaving] = useState(false);
 
-  const saveSong = () => {
+  const saveSong = async () => {
     const lines = parseSheet(sheetText);
     const hasPlayableLine = lines.some((line) => line.chord || line.lyric);
 
@@ -48,26 +49,34 @@ export default function AddSongScreen({ navigation }) {
       return;
     }
 
-    const song = addSong({
-      title,
-      artist,
-      key,
-      difficulty,
-      category,
-      lines,
-    });
+    try {
+      setSaving(true);
+      const song = await addSong({
+        title,
+        artist,
+        key,
+        difficulty,
+        category,
+        lines,
+      });
 
-    Alert.alert('Song added', `${song.title} is ready to play.`, [
-      { text: 'Stay Here', style: 'cancel' },
-      { text: 'Open Song', onPress: () => navigation.replace('Song', { song }) },
-    ]);
+      Alert.alert('Song added', `${song.title} is ready to play.`, [
+        { text: 'Stay Here', style: 'cancel' },
+        { text: 'Open Song', onPress: () => navigation.replace('Song', { song }) },
+      ]);
 
-    setTitle('');
-    setArtist('');
-    setKey('');
-    setDifficulty('Beginner');
-    setCategory('');
-    setSheetText('');
+      setTitle('');
+      setArtist('');
+      setKey('');
+      setDifficulty('Beginner');
+      setCategory('');
+      setSheetText('');
+    } catch (error) {
+      console.error('Failed to save song', error);
+      Alert.alert('Save failed', 'The song could not be saved right now. Please try again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -85,8 +94,8 @@ export default function AddSongScreen({ navigation }) {
           ) : null}
         </View>
         <Text style={styles.headerTitle}>Add Song</Text>
-        <TouchableOpacity onPress={saveSong} style={styles.saveBtn}>
-          <Text style={styles.saveBtnText}>Save</Text>
+        <TouchableOpacity onPress={saveSong} style={styles.saveBtn} disabled={saving}>
+          <Text style={styles.saveBtnText}>{saving ? 'Saving...' : 'Save'}</Text>
         </TouchableOpacity>
       </View>
 

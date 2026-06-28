@@ -12,20 +12,21 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#0f0800",
+        "foregroundImage": "./assets/android-icon-foreground.png"
       },
       "package": "com.teekunana.GuitarSongs"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.ico"
     },
     "extra": {
       "eas": {
         "projectId": "c3f092cc-c067-46d1-8b26-da25fd4bf0f4"
       }
-    }
+    },
+    "plugins": [
+      "expo-sqlite"
+    ]
   }
 }

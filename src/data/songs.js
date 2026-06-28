@@ -43797,6 +43797,6 @@ const SONG_LIBRARY = [
 
 export const SONGS = SONG_LIBRARY;
 
-export const CATEGORIES = ['All', ...new Set(SONGS.map((song) => song.category))];
+export const CATEGORIES = ['All', ...new Set(SONGS.filter(Boolean).map((song) => song.category))];
 
 export { line, breakLine, createSong };

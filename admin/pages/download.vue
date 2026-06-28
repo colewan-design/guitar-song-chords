@@ -3,11 +3,7 @@
     <!-- Minimal nav -->
     <nav class="border-b border-border px-6 h-14 flex items-center">
       <div class="flex items-center gap-2">
-        <div class="w-7 h-7 bg-accent rounded-lg flex items-center justify-center">
-          <svg class="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M9 3v10.55A4 4 0 1 0 11 17V7h4V3H9z"/>
-          </svg>
-        </div>
+        <img src="/icon.png" class="w-7 h-7" alt="Guitar Songs Chords" />
         <span class="font-bold text-base tracking-tight">Guitar Songs Chords</span>
       </div>
     </nav>
@@ -35,11 +31,7 @@
         <!-- Release available -->
         <div v-else>
           <!-- App icon -->
-          <div class="w-24 h-24 bg-gradient-to-br from-accent/30 to-accent/10 border border-accent/30 rounded-3xl flex items-center justify-center mx-auto mb-6">
-            <svg class="w-12 h-12 text-accent" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M9 3v10.55A4 4 0 1 0 11 17V7h4V3H9z"/>
-            </svg>
-          </div>
+          <img src="/icon.png" class="w-24 h-24 rounded-3xl mx-auto mb-6" alt="Guitar Songs Chords" />
 
           <h1 class="text-3xl font-bold text-white mb-1">Guitar Songs Chords</h1>
           <p class="text-muted-light text-sm mb-6">Learn guitar songs with chords & lyrics</p>

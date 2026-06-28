@@ -16,7 +16,7 @@ export default function FavouritesScreen({ navigation }) {
         </View>
         <View style={styles.emptyState}>
           <LinearGradient colors={['#1e1005', '#0f0800']} style={styles.emptyGuitarBox}>
-            <Ionicons name="guitar-sharp" size={80} color="#2a1a0a" />
+            <Ionicons name="musical-notes" size={80} color="#2a1a0a" />
           </LinearGradient>
           <Text style={styles.emptyTitle}>You have no favourites yet</Text>
           <Text style={styles.emptyDesc}>
@@ -42,7 +42,7 @@ export default function FavouritesScreen({ navigation }) {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.card}
-            onPress={() => navigation.navigate('Song', { song: item })}
+            onPress={() => navigation.navigate('Song', { songId: item.id })}
             activeOpacity={0.8}
           >
             <LinearGradient colors={item.gradient} style={styles.thumb}>

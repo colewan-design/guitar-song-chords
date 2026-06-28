@@ -3,10 +3,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import { SQLiteProvider } from 'expo-sqlite';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { FavouritesProvider } from './src/context/FavouritesContext';
 import { SongsProvider } from './src/context/SongsContext';
+import { DATABASE_NAME, migrateDbIfNeeded } from './src/data/songDatabase';
 import HomeScreen from './src/screens/HomeScreen';
 import DiscoverScreen from './src/screens/DiscoverScreen';
 import FavouritesScreen from './src/screens/FavouritesScreen';
@@ -57,8 +59,9 @@ function HomeTabs() {
 export default function App() {
   return (
     <SafeAreaProvider>
-      <SongsProvider>
-        <FavouritesProvider>
+      <SQLiteProvider databaseName={DATABASE_NAME} onInit={migrateDbIfNeeded}>
+        <SongsProvider>
+          <FavouritesProvider>
           <NavigationContainer>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
               <Stack.Screen name="Tabs" component={HomeTabs} />
@@ -66,8 +69,9 @@ export default function App() {
               <Stack.Screen name="AddSong" component={AddSongScreen} />
             </Stack.Navigator>
           </NavigationContainer>
-        </FavouritesProvider>
-      </SongsProvider>
+          </FavouritesProvider>
+        </SongsProvider>
+      </SQLiteProvider>
     </SafeAreaProvider>
   );
 }
