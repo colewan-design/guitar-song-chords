@@ -6,7 +6,11 @@ export default defineNuxtRouteMiddleware((to) => {
     return navigateTo('/login')
   }
 
-  if (user.value && user.value.email_confirmed_at && (to.path === '/login' || to.path === '/register')) {
+  if (user.value && to.path === '/login') {
+    return navigateTo('/')
+  }
+
+  if (user.value && user.value.email_confirmed_at && to.path === '/register') {
     return navigateTo('/')
   }
 })
