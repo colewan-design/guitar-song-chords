@@ -121,6 +121,7 @@
 
 <script setup lang="ts">
 const { release, loading, error, fetchRelease, upsertRelease } = useRelease()
+const { show: showSnack } = useSnackbar()
 
 const saving = ref(false)
 const copied = ref(false)
@@ -177,8 +178,10 @@ async function handleFileChange(e: Event) {
     const { data } = supabase.storage.from('releases').getPublicUrl('app-release.apk')
     form.apk_url = data.publicUrl
     form.file_size = (file.size / 1024 / 1024).toFixed(1) + ' MB'
+    showSnack('APK uploaded successfully')
   } catch (err: any) {
     uploadError.value = err?.message ?? 'Upload failed.'
+    showSnack(uploadError.value, 'error')
   } finally {
     uploading.value = false
     if (fileInput.value) fileInput.value.value = ''
@@ -187,13 +190,16 @@ async function handleFileChange(e: Event) {
 
 async function handleSave() {
   saving.value = true
-  await upsertRelease({ ...form })
+  const ok = await upsertRelease({ ...form })
   saving.value = false
+  if (ok) showSnack('Release saved')
+  else showSnack(error.value ?? 'Failed to save', 'error')
 }
 
 async function copyLink() {
   await navigator.clipboard.writeText(pageUrl.value)
   copied.value = true
+  showSnack('Link copied to clipboard')
   setTimeout(() => { copied.value = false }, 2000)
 }
 
