@@ -88,12 +88,58 @@
         </section>
 
         <!-- STATS -->
-        <section>
+        <section class="mb-10">
           <h2 class="text-xs font-bold uppercase tracking-widest text-muted-light mb-5">Library Stats</h2>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div v-for="stat in stats" :key="stat.label" class="bg-surface border border-border rounded-2xl p-5">
               <p class="text-muted text-xs font-semibold uppercase tracking-wider mb-1">{{ stat.label }}</p>
               <p class="text-3xl font-bold text-white">{{ stat.value }}</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- APP RELEASE -->
+        <section>
+          <div class="flex items-center justify-between mb-5">
+            <h2 class="text-xs font-bold uppercase tracking-widest text-muted-light">App Distribution</h2>
+            <NuxtLink to="/release" class="text-xs font-bold tracking-widest text-accent hover:text-accent-dark transition-colors">MANAGE</NuxtLink>
+          </div>
+
+          <div class="bg-surface border border-border rounded-2xl p-5 flex items-center gap-5">
+            <!-- Icon -->
+            <div class="w-14 h-14 bg-gradient-to-br from-accent/30 to-accent/10 border border-accent/20 rounded-2xl flex items-center justify-center shrink-0">
+              <svg class="w-7 h-7 text-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+              </svg>
+            </div>
+
+            <div class="flex-1 min-w-0">
+              <div class="flex items-baseline gap-2 mb-0.5">
+                <span class="text-2xl font-bold text-white">{{ formatCount(release?.download_count ?? 0) }}</span>
+                <span class="text-muted text-sm">downloads</span>
+              </div>
+              <p class="text-xs text-muted-light">
+                <span v-if="release?.apk_url">
+                  v{{ release.version }} · <span class="text-green-400">Live</span>
+                </span>
+                <span v-else class="text-red-400">No APK set — click Manage to upload</span>
+              </p>
+            </div>
+
+            <div class="flex gap-2 shrink-0">
+              <NuxtLink
+                to="/download"
+                target="_blank"
+                class="text-xs bg-border/60 hover:bg-accent/20 hover:text-accent text-muted-light px-3 py-2 rounded-xl font-semibold transition-colors"
+              >
+                Preview
+              </NuxtLink>
+              <NuxtLink
+                to="/release"
+                class="text-xs bg-accent hover:bg-accent-dark text-black px-3 py-2 rounded-xl font-semibold transition-colors"
+              >
+                Edit
+              </NuxtLink>
             </div>
           </div>
         </section>
@@ -154,8 +200,9 @@ const IconTrendingUp = defineComponent({ render: () => h('svg', { fill: 'none', 
 const IconAward = defineComponent({ render: () => h('svg', { fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', viewBox: '0 0 24 24' }, [h('circle', { cx: '12', cy: '8', r: '6' }), h('path', { d: 'M15.477 12.89 17 22l-5-3-5 3 1.523-9.11' })]) })
 
 const { songs, loading, error, fetchSongs } = useSongs()
+const { release, fetchRelease } = useRelease()
 
-await fetchSongs()
+await Promise.all([fetchSongs(), fetchRelease()])
 
 const recent = computed(() => songs.value.slice(0, 10))
 const sidebarSongs = computed(() => songs.value.slice(0, 12))
@@ -182,6 +229,11 @@ function diffDot(d: string) {
 
 function goToSongs(_filter: string) {
   navigateTo('/songs')
+}
+
+function formatCount(n: number) {
+  if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k'
+  return n.toString()
 }
 </script>
 
