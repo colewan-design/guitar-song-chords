@@ -11,7 +11,7 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
-      title: 'Guitar Chords Admin',
+      title: 'Guitar Songs Chords',
       meta: [{ name: 'viewport', content: 'width=device-width, initial-scale=1' }],
     },
   },

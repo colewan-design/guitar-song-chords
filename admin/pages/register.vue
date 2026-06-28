@@ -8,7 +8,7 @@
             <path d="M9 3v10.55A4 4 0 1 0 11 17V7h4V3H9z"/>
           </svg>
         </div>
-        <span class="font-bold text-xl tracking-tight text-white">GuitarChords<span class="text-accent">.</span>admin</span>
+        <span class="font-bold text-xl tracking-tight text-white">Guitar Songs Chords</span>
       </div>
 
       <!-- Success state -->

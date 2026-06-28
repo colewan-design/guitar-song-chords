@@ -8,7 +8,7 @@
             <path d="M9 3v10.55A4 4 0 1 0 11 17V7h4V3H9z"/>
           </svg>
         </div>
-        <span class="font-bold text-base tracking-tight">GuitarChords<span class="text-accent">.</span></span>
+        <span class="font-bold text-base tracking-tight">Guitar Songs Chords</span>
       </div>
     </nav>
 
@@ -41,7 +41,7 @@
             </svg>
           </div>
 
-          <h1 class="text-3xl font-bold text-white mb-1">GuitarChords</h1>
+          <h1 class="text-3xl font-bold text-white mb-1">Guitar Songs Chords</h1>
           <p class="text-muted-light text-sm mb-6">Learn guitar songs with chords & lyrics</p>
 
           <!-- Meta pills -->
