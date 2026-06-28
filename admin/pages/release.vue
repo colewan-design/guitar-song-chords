@@ -64,6 +64,23 @@
       </div>
 
       <div>
+        <label class="block text-xs font-semibold text-accent uppercase tracking-wider mb-2">APK File</label>
+        <input ref="fileInput" type="file" accept=".apk" class="hidden" @change="handleFileChange" />
+        <button
+          @click="fileInput?.click()"
+          :disabled="uploading"
+          class="w-full flex items-center justify-center gap-2 bg-card border border-dashed border-border hover:border-accent/50 rounded-xl px-4 py-4 text-sm text-muted-light hover:text-white transition-colors disabled:opacity-50"
+        >
+          <svg v-if="!uploading" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+          </svg>
+          <div v-else class="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+          {{ uploading ? `Uploading… ${uploadProgress}%` : (form.apk_url ? 'Replace APK' : 'Upload APK') }}
+        </button>
+        <p v-if="uploadError" class="text-xs text-red-400 mt-1.5">{{ uploadError }}</p>
+      </div>
+
+      <div>
         <label class="block text-xs font-semibold text-accent uppercase tracking-wider mb-2">APK URL *</label>
         <input
           v-model="form.apk_url"
@@ -71,7 +88,7 @@
           placeholder="https://..."
           class="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-sm text-white placeholder-muted focus:outline-none focus:border-accent/60 transition-colors"
         />
-        <p class="text-xs text-muted mt-1.5">Paste a direct download link — Supabase Storage, Google Drive (direct), S3, etc.</p>
+        <p class="text-xs text-muted mt-1.5">Auto-filled after upload, or paste a direct link manually.</p>
       </div>
 
       <div>
@@ -103,10 +120,15 @@
 </template>
 
 <script setup lang="ts">
+const supabase = useSupabaseClient()
 const { release, loading, error, fetchRelease, upsertRelease } = useRelease()
 
 const saving = ref(false)
 const copied = ref(false)
+const uploading = ref(false)
+const uploadProgress = ref(0)
+const uploadError = ref('')
+const fileInput = ref<HTMLInputElement | null>(null)
 
 const form = reactive({
   version: '',
@@ -128,6 +150,35 @@ const pageUrl = computed(() => {
   if (typeof window === 'undefined') return ''
   return `${window.location.origin}/download`
 })
+
+async function handleFileChange(e: Event) {
+  const file = (e.target as HTMLInputElement).files?.[0]
+  if (!file) return
+
+  uploading.value = true
+  uploadProgress.value = 0
+  uploadError.value = ''
+
+  const fileSizeMB = (file.size / 1024 / 1024).toFixed(1) + ' MB'
+  const fileName = `app-release.apk`
+
+  const { error: uploadErr } = await supabase.storage
+    .from('releases')
+    .upload(fileName, file, { upsert: true, contentType: 'application/vnd.android.package-archive' })
+
+  if (uploadErr) {
+    uploadError.value = uploadErr.message
+    uploading.value = false
+    return
+  }
+
+  const { data } = supabase.storage.from('releases').getPublicUrl(fileName)
+  form.apk_url = data.publicUrl
+  form.file_size = fileSizeMB
+  uploading.value = false
+
+  if (fileInput.value) fileInput.value.value = ''
+}
 
 async function handleSave() {
   saving.value = true
