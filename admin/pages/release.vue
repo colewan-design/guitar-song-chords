@@ -120,7 +120,6 @@
 </template>
 
 <script setup lang="ts">
-const supabase = useSupabaseClient()
 const { release, loading, error, fetchRelease, upsertRelease } = useRelease()
 
 const saving = ref(false)
@@ -156,28 +155,22 @@ async function handleFileChange(e: Event) {
   if (!file) return
 
   uploading.value = true
-  uploadProgress.value = 0
   uploadError.value = ''
 
-  const fileSizeMB = (file.size / 1024 / 1024).toFixed(1) + ' MB'
-  const fileName = `app-release.apk`
+  try {
+    const body = new FormData()
+    body.append('file', file)
 
-  const { error: uploadErr } = await supabase.storage
-    .from('releases')
-    .upload(fileName, file, { upsert: true, contentType: 'application/vnd.android.package-archive' })
+    const { url } = await $fetch<{ url: string }>('/api/upload-apk', { method: 'POST', body })
 
-  if (uploadErr) {
-    uploadError.value = uploadErr.message
+    form.apk_url = url
+    form.file_size = (file.size / 1024 / 1024).toFixed(1) + ' MB'
+  } catch (err: any) {
+    uploadError.value = err?.data?.message ?? 'Upload failed.'
+  } finally {
     uploading.value = false
-    return
+    if (fileInput.value) fileInput.value.value = ''
   }
-
-  const { data } = supabase.storage.from('releases').getPublicUrl(fileName)
-  form.apk_url = data.publicUrl
-  form.file_size = fileSizeMB
-  uploading.value = false
-
-  if (fileInput.value) fileInput.value.value = ''
 }
 
 async function handleSave() {
