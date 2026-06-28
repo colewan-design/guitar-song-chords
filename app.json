@@ -2,6 +2,7 @@
   "expo": {
     "name": "Guitar-Songs",
     "slug": "Guitar-Songs",
+    "scheme": "guitarsongs",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,10 +16,16 @@
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
-      }
+      },
+      "package": "com.teekunana.GuitarSongs"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c3f092cc-c067-46d1-8b26-da25fd4bf0f4"
+      }
     }
   }
 }

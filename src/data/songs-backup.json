@@ -1,0 +1,142 @@
+[
+  {
+    "id": "1",
+    "title": "Amazing Grace",
+    "artist": "John Newton",
+    "key": "G",
+    "difficulty": "Beginner",
+    "category": "Gospel",
+    "gradient": ["#5C1A00", "#1A0800"],
+    "lines": [
+      { "chord": "G                  C          G", "lyric": "Amazing grace, how sweet the sound" },
+      { "chord": "                        D", "lyric": "That saved a wretch like me" },
+      { "chord": "G                  C          G", "lyric": "I once was lost, but now am found" },
+      { "chord": "          Em       D       G", "lyric": "Was blind, but now I see" },
+      { "chord": "", "lyric": "" },
+      { "chord": "G                    C       G", "lyric": "Twas grace that taught my heart to fear" },
+      { "chord": "                       D", "lyric": "And grace my fears relieved" },
+      { "chord": "G                  C          G", "lyric": "How precious did that grace appear" },
+      { "chord": "        Em      D        G", "lyric": "The hour I first believed" }
+    ]
+  },
+  {
+    "id": "2",
+    "title": "House of the Rising Sun",
+    "artist": "Traditional",
+    "key": "Am",
+    "difficulty": "Intermediate",
+    "category": "Folk",
+    "gradient": ["#1A1A5C", "#08081A"],
+    "lines": [
+      { "chord": "Am      C        D          F", "lyric": "There is a house in New Orleans" },
+      { "chord": "Am      C        E", "lyric": "They call the Rising Sun" },
+      { "chord": "Am        C        D            F", "lyric": "And it's been the ruin of many a poor boy" },
+      { "chord": "Am      E         Am", "lyric": "And God, I know I'm one" },
+      { "chord": "", "lyric": "" },
+      { "chord": "Am       C        D           F", "lyric": "My mother was a tailor" },
+      { "chord": "Am         C       E", "lyric": "She sewed my new blue jeans" },
+      { "chord": "Am        C        D           F", "lyric": "My father was a gambling man" },
+      { "chord": "Am      E         Am", "lyric": "Down in New Orleans" }
+    ]
+  },
+  {
+    "id": "3",
+    "title": "Scarborough Fair",
+    "artist": "Traditional English",
+    "key": "Am",
+    "difficulty": "Beginner",
+    "category": "Folk",
+    "gradient": ["#1A5C2A", "#081A0B"],
+    "lines": [
+      { "chord": "Am              G", "lyric": "Are you going to Scarborough Fair?" },
+      { "chord": "Am       C       Am", "lyric": "Parsley, sage, rosemary and thyme" },
+      { "chord": "Am              C         G", "lyric": "Remember me to one who lives there" },
+      { "chord": "   Am    D        Am", "lyric": "She once was a true love of mine" },
+      { "chord": "", "lyric": "" },
+      { "chord": "Am              G", "lyric": "Tell her to make me a cambric shirt" },
+      { "chord": "Am       C       Am", "lyric": "Parsley, sage, rosemary and thyme" },
+      { "chord": "Am              C         G", "lyric": "Without no seams nor needle work" },
+      { "chord": "   Am    D        Am", "lyric": "Then she'll be a true love of mine" }
+    ]
+  },
+  {
+    "id": "4",
+    "title": "Greensleeves",
+    "artist": "Traditional",
+    "key": "Am",
+    "difficulty": "Beginner",
+    "category": "Classical",
+    "gradient": ["#5C4A00", "#1A1400"],
+    "lines": [
+      { "chord": "Am          C", "lyric": "Alas my love, you do me wrong" },
+      { "chord": "G              Em", "lyric": "To cast me off discourteously" },
+      { "chord": "Am             C", "lyric": "For I have loved you so long" },
+      { "chord": "G          E", "lyric": "Delighting in your company" },
+      { "chord": "", "lyric": "" },
+      { "chord": "C              G", "lyric": "Greensleeves was all my joy" },
+      { "chord": "Em             E", "lyric": "Greensleeves was my delight" },
+      { "chord": "C              G", "lyric": "Greensleeves was my heart of gold" },
+      { "chord": "Em      E      Am", "lyric": "And who but my lady Greensleeves" }
+    ]
+  },
+  {
+    "id": "5",
+    "title": "Worried Man Blues",
+    "artist": "Traditional",
+    "key": "G",
+    "difficulty": "Beginner",
+    "category": "Blues",
+    "gradient": ["#3D1A5C", "#0F0820"],
+    "lines": [
+      { "chord": "G", "lyric": "It takes a worried man to sing a worried song" },
+      { "chord": "C                                G", "lyric": "It takes a worried man to sing a worried song" },
+      { "chord": "G                                    D", "lyric": "It takes a worried man to sing a worried song" }
+    ]
+  },
+  {
+    "id": "6",
+    "title": "Sloop John B",
+    "artist": "Traditional Bahamian",
+    "key": "G",
+    "difficulty": "Beginner",
+    "category": "Folk",
+    "gradient": ["#005C4A", "#001A15"],
+    "lines": [
+      { "chord": "G", "lyric": "We come on the Sloop John B" },
+      { "chord": "              C            G", "lyric": "My grandfather and me" },
+      { "chord": "                    D", "lyric": "Around Nassau town we did roam" },
+      { "chord": "G                        C           G", "lyric": "Drinking all night, got into a fight" },
+      { "chord": "         D           G", "lyric": "I feel so broke up, I want to go home" }
+    ]
+  },
+  {
+    "id": "7",
+    "title": "Oh Susanna",
+    "artist": "Stephen Foster",
+    "key": "D",
+    "difficulty": "Beginner",
+    "category": "Country",
+    "gradient": ["#5C1A1A", "#1A0808"],
+    "lines": [
+      { "chord": "D                         A", "lyric": "I come from Alabama with my banjo on my knee" },
+      { "chord": "D                    A        D", "lyric": "I'm going to Louisiana, my true love for to see" },
+      { "chord": "D                               A", "lyric": "It rained all night the day I left, the weather it was dry" },
+      { "chord": "D                      A          D", "lyric": "The sun so hot I froze to death, Susanna don't you cry" }
+    ]
+  },
+  {
+    "id": "8",
+    "title": "When the Saints Go Marching In",
+    "artist": "Traditional Gospel",
+    "key": "G",
+    "difficulty": "Beginner",
+    "category": "Gospel",
+    "gradient": ["#1A3D5C", "#080F1A"],
+    "lines": [
+      { "chord": "G", "lyric": "Oh when the saints go marching in" },
+      { "chord": "             D", "lyric": "Oh when the saints go marching in" },
+      { "chord": "G                    G7       C", "lyric": "Oh Lord I want to be in that number" },
+      { "chord": "        G      D       G", "lyric": "When the saints go marching in" }
+    ]
+  }
+]
