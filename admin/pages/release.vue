@@ -158,15 +158,27 @@ async function handleFileChange(e: Event) {
   uploadError.value = ''
 
   try {
-    const body = new FormData()
-    body.append('file', file)
+    // Get a signed URL from the server (uses service role key, bypasses RLS)
+    const { signedUrl } = await $fetch<{ signedUrl: string }>('/api/upload-apk-url', { method: 'POST' })
 
-    const { url } = await $fetch<{ url: string }>('/api/upload-apk', { method: 'POST', body })
+    // Upload directly from browser to Supabase — no Vercel size limit
+    const res = await fetch(signedUrl, {
+      method: 'PUT',
+      body: file,
+      headers: { 'Content-Type': 'application/vnd.android.package-archive' },
+    })
 
-    form.apk_url = url
+    if (!res.ok) {
+      const text = await res.text()
+      throw new Error(text || 'Upload failed.')
+    }
+
+    const supabase = useSupabaseClient()
+    const { data } = supabase.storage.from('releases').getPublicUrl('app-release.apk')
+    form.apk_url = data.publicUrl
     form.file_size = (file.size / 1024 / 1024).toFixed(1) + ' MB'
   } catch (err: any) {
-    uploadError.value = err?.data?.message ?? 'Upload failed.'
+    uploadError.value = err?.message ?? 'Upload failed.'
   } finally {
     uploading.value = false
     if (fileInput.value) fileInput.value.value = ''
