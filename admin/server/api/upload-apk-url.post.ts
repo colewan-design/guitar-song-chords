@@ -6,6 +6,9 @@ export default defineEventHandler(async () => {
     process.env.SUPABASE_KEY!,
   )
 
+  // Remove existing file so createSignedUploadUrl doesn't fail
+  await supabase.storage.from('releases').remove(['app-release.apk'])
+
   const { data, error } = await supabase.storage
     .from('releases')
     .createSignedUploadUrl('app-release.apk')
