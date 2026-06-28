@@ -9,15 +9,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        bg: '#0f0800',
-        surface: '#1a0e05',
-        card: '#1e1208',
-        border: '#2a1a0a',
-        accent: '#d4873c',
-        'accent-dark': '#7a3d0e',
-        muted: '#555',
+        bg: '#0a0a0a',
+        surface: '#141414',
+        card: '#1c1c1c',
+        border: '#2a2a2a',
+        accent: '#f5c518',
+        'accent-dark': '#c49a10',
+        muted: '#666666',
+        'muted-light': '#999999',
       },
       fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
         mono: ['ui-monospace', 'SFMono-Regular', 'Consolas', 'monospace'],
       },
     },

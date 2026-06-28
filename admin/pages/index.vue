@@ -1,147 +1,191 @@
 <template>
   <div>
-    <div class="flex items-center justify-between mb-6">
-      <div>
-        <h1 class="text-2xl font-bold">Songs</h1>
-        <p class="text-muted text-sm mt-1">{{ filtered.length }} of {{ songs.length }} songs</p>
-      </div>
-      <NuxtLink to="/songs/add" class="bg-accent hover:bg-accent-dark text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors">
-        + Add Song
-      </NuxtLink>
-    </div>
+    <div class="flex gap-8">
+      <!-- Left / main column -->
+      <div class="flex-1 min-w-0">
 
-    <!-- Search + filter -->
-    <div class="flex gap-3 mb-6">
-      <input
-        v-model="query"
-        type="text"
-        placeholder="Search title, artist, chord..."
-        class="flex-1 bg-surface border border-border rounded-lg px-4 py-2 text-sm text-white placeholder-muted focus:outline-none focus:border-accent"
-      />
-      <select v-model="diffFilter" class="bg-surface border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent">
-        <option value="">All difficulties</option>
-        <option>Beginner</option>
-        <option>Intermediate</option>
-        <option>Advanced</option>
-      </select>
-    </div>
-
-    <!-- Loading -->
-    <div v-if="loading" class="text-muted text-center py-20">Loading songs...</div>
-
-    <!-- Error -->
-    <div v-else-if="error" class="bg-red-900/30 border border-red-700 text-red-300 rounded-lg p-4 text-sm">
-      {{ error }}
-    </div>
-
-    <!-- Empty -->
-    <div v-else-if="filtered.length === 0" class="text-center py-20">
-      <p class="text-4xl mb-4">♪</p>
-      <p class="text-muted">No songs yet. <NuxtLink to="/songs/add" class="text-accent underline">Add the first one.</NuxtLink></p>
-    </div>
-
-    <!-- Song grid -->
-    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div
-        v-for="song in filtered"
-        :key="song.id"
-        class="bg-surface border border-border rounded-xl overflow-hidden hover:border-accent/50 transition-colors"
-      >
-        <!-- Gradient bar -->
-        <div class="h-2" :style="{ background: `linear-gradient(to right, ${song.gradient[0]}, ${song.gradient[1]})` }" />
-
-        <div class="p-4">
-          <div class="flex items-start justify-between gap-2">
-            <div class="min-w-0">
-              <h2 class="font-bold text-white truncate">{{ song.title }}</h2>
-              <p class="text-muted text-sm truncate">{{ song.artist || 'Unknown artist' }}</p>
-            </div>
-            <span :class="diffColor(song.difficulty)" class="text-xs font-semibold px-2 py-1 rounded-full whitespace-nowrap shrink-0">
-              {{ song.difficulty }}
-            </span>
+        <!-- COLLECTIONS YOU'LL LOVE -->
+        <section class="mb-10">
+          <div class="flex items-center justify-between mb-5">
+            <h2 class="text-xs font-bold uppercase tracking-widest text-muted-light">Collections You'll Love</h2>
+            <NuxtLink to="/songs" class="text-xs font-bold tracking-widest text-accent hover:text-accent-dark transition-colors">VIEW ALL</NuxtLink>
           </div>
 
-          <div class="flex flex-wrap gap-1.5 mt-3">
-            <span class="text-xs bg-border text-accent px-2 py-0.5 rounded font-mono font-bold">{{ song.key }}</span>
-            <span class="text-xs bg-border text-muted px-2 py-0.5 rounded">{{ song.category }}</span>
-            <span class="text-xs text-muted">{{ song.lines.length }} lines</span>
+          <div v-if="loading" class="grid grid-cols-2 gap-3">
+            <div v-for="i in 6" :key="i" class="bg-surface border border-border rounded-2xl h-20 animate-pulse" />
           </div>
 
-          <div v-if="song.chords.length" class="flex flex-wrap gap-1 mt-3">
-            <span v-for="c in song.chords.slice(0, 6)" :key="c" class="text-xs bg-accent/10 text-accent border border-accent/20 px-2 py-0.5 rounded font-mono">
-              {{ c }}
-            </span>
-            <span v-if="song.chords.length > 6" class="text-xs text-muted">+{{ song.chords.length - 6 }}</span>
-          </div>
-
-          <div class="flex gap-2 mt-4">
-            <NuxtLink :to="`/songs/${song.id}`" class="flex-1 text-center text-sm bg-border hover:bg-accent/20 text-white px-3 py-1.5 rounded-lg transition-colors font-medium">
-              Edit
-            </NuxtLink>
-            <button @click="confirmDelete(song)" class="text-sm bg-red-900/30 hover:bg-red-800/50 text-red-400 px-3 py-1.5 rounded-lg transition-colors font-medium">
-              Delete
+          <div v-else class="grid grid-cols-2 gap-3">
+            <button
+              v-for="col in collections"
+              :key="col.label"
+              @click="goToSongs(col.filter)"
+              class="flex items-center gap-4 bg-surface border border-border rounded-2xl p-4 hover:border-accent/40 hover:bg-card transition-all text-left group"
+            >
+              <div :class="['w-12 h-12 rounded-xl flex items-center justify-center shrink-0', col.bg]">
+                <component :is="col.icon" class="w-6 h-6 text-white" />
+              </div>
+              <div class="min-w-0">
+                <p class="font-semibold text-white text-sm truncate group-hover:text-accent transition-colors">{{ col.label }}</p>
+                <p class="text-xs text-muted mt-0.5">{{ col.count }} songs</p>
+              </div>
             </button>
           </div>
-        </div>
-      </div>
-    </div>
+        </section>
 
-    <!-- Delete modal -->
-    <div v-if="deleting" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
-      <div class="bg-surface border border-border rounded-xl p-6 max-w-sm w-full">
-        <h3 class="font-bold text-lg mb-2">Delete song?</h3>
-        <p class="text-muted text-sm mb-6">"{{ deleting.title }}" will be permanently removed.</p>
-        <div class="flex gap-3">
-          <button @click="deleting = null" class="flex-1 bg-border hover:bg-border/70 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-            Cancel
-          </button>
-          <button @click="doDelete" :disabled="deleteLoading" class="flex-1 bg-red-700 hover:bg-red-600 disabled:opacity-50 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
-            {{ deleteLoading ? 'Deleting...' : 'Delete' }}
-          </button>
-        </div>
+        <!-- RECENTLY ADDED -->
+        <section class="mb-10">
+          <div class="flex items-center justify-between mb-5">
+            <h2 class="text-xs font-bold uppercase tracking-widest text-muted-light">Recently Added</h2>
+            <NuxtLink to="/songs" class="text-xs font-bold tracking-widest text-accent hover:text-accent-dark transition-colors">VIEW ALL</NuxtLink>
+          </div>
+
+          <div v-if="loading" class="flex gap-4 overflow-hidden">
+            <div v-for="i in 4" :key="i" class="w-40 shrink-0 bg-surface border border-border rounded-2xl h-52 animate-pulse" />
+          </div>
+
+          <div v-else-if="recent.length === 0" class="text-muted text-sm">No songs yet.</div>
+
+          <div v-else class="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+            <div
+              v-for="song in recent"
+              :key="song.id"
+              class="w-40 shrink-0 group cursor-pointer"
+              @click="navigateTo(`/songs/${song.id}`)"
+            >
+              <div
+                class="w-40 h-40 rounded-2xl flex items-center justify-center mb-3 relative overflow-hidden group-hover:opacity-80 transition-opacity"
+                :style="{ background: `linear-gradient(135deg, ${song.gradient[0]}, ${song.gradient[1]})` }"
+              >
+                <!-- Music note icon -->
+                <svg class="w-14 h-14 text-white opacity-40" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M9 3v10.55A4 4 0 1 0 11 17V7h4V3H9z"/>
+                </svg>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
+                  <div class="w-8 h-8 bg-accent rounded-full flex items-center justify-center ml-auto">
+                    <svg class="w-4 h-4 text-black ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  </div>
+                </div>
+              </div>
+              <p class="text-sm font-semibold text-white truncate">{{ song.title }}</p>
+              <p class="text-xs text-muted mt-0.5 truncate">{{ song.artist || 'Unknown' }}</p>
+            </div>
+
+            <!-- Add new card -->
+            <NuxtLink to="/songs/add" class="w-40 shrink-0">
+              <div class="w-40 h-40 rounded-2xl border-2 border-dashed border-border hover:border-accent/50 flex items-center justify-center mb-3 transition-colors group">
+                <div class="text-center">
+                  <div class="w-10 h-10 bg-surface rounded-full flex items-center justify-center mx-auto mb-2 group-hover:bg-accent/10 transition-colors">
+                    <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                    </svg>
+                  </div>
+                  <p class="text-xs text-muted group-hover:text-muted-light transition-colors">Add Song</p>
+                </div>
+              </div>
+            </NuxtLink>
+          </div>
+        </section>
+
+        <!-- STATS -->
+        <section>
+          <h2 class="text-xs font-bold uppercase tracking-widest text-muted-light mb-5">Library Stats</h2>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div v-for="stat in stats" :key="stat.label" class="bg-surface border border-border rounded-2xl p-5">
+              <p class="text-muted text-xs font-semibold uppercase tracking-wider mb-1">{{ stat.label }}</p>
+              <p class="text-3xl font-bold text-white">{{ stat.value }}</p>
+            </div>
+          </div>
+        </section>
       </div>
+
+      <!-- Right sidebar -->
+      <aside class="w-72 shrink-0 hidden lg:block">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="text-xs font-bold uppercase tracking-widest text-muted-light">All Songs</h2>
+          <NuxtLink to="/songs" class="text-xs font-bold tracking-widest text-accent hover:text-accent-dark transition-colors">VIEW ALL</NuxtLink>
+        </div>
+
+        <div v-if="loading" class="space-y-3">
+          <div v-for="i in 8" :key="i" class="bg-surface border border-border rounded-xl h-16 animate-pulse" />
+        </div>
+
+        <div v-else class="space-y-1">
+          <NuxtLink
+            v-for="song in sidebarSongs"
+            :key="song.id"
+            :to="`/songs/${song.id}`"
+            class="flex items-center gap-3 p-3 rounded-xl hover:bg-surface group transition-colors"
+          >
+            <div
+              class="w-12 h-12 rounded-lg shrink-0 flex items-center justify-center"
+              :style="{ background: `linear-gradient(135deg, ${song.gradient[0]}, ${song.gradient[1]})` }"
+            >
+              <svg class="w-5 h-5 text-white opacity-60" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M9 3v10.55A4 4 0 1 0 11 17V7h4V3H9z"/>
+              </svg>
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="text-sm font-semibold text-white truncate group-hover:text-accent transition-colors">{{ song.title }}</p>
+              <p class="text-xs text-muted truncate">{{ song.artist || 'Unknown' }}</p>
+            </div>
+            <span :class="diffDot(song.difficulty)" class="w-2 h-2 rounded-full shrink-0" />
+          </NuxtLink>
+
+          <div v-if="songs.length === 0" class="text-center py-12">
+            <p class="text-muted text-sm">No songs yet.</p>
+            <NuxtLink to="/songs/add" class="text-accent text-sm hover:underline mt-1 inline-block">Add one →</NuxtLink>
+          </div>
+        </div>
+      </aside>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { Song } from '~/composables/useSongs'
+import { defineComponent, h } from 'vue'
 
-const { songs, loading, error, fetchSongs, deleteSong } = useSongs()
-const query = ref('')
-const diffFilter = ref('')
-const deleting = ref<Song | null>(null)
-const deleteLoading = ref(false)
+// SVG icon components
+const IconHeart = defineComponent({ render: () => h('svg', { fill: 'currentColor', viewBox: '0 0 24 24' }, [h('path', { d: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z' })]) })
+const IconMusic = defineComponent({ render: () => h('svg', { fill: 'currentColor', viewBox: '0 0 24 24' }, [h('path', { d: 'M9 3v10.55A4 4 0 1 0 11 17V7h4V3H9z' })]) })
+const IconStar = defineComponent({ render: () => h('svg', { fill: 'currentColor', viewBox: '0 0 24 24' }, [h('path', { d: 'M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z' })]) })
+const IconZap = defineComponent({ render: () => h('svg', { fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', viewBox: '0 0 24 24' }, [h('path', { d: 'M13 2L3 14h9l-1 8 10-12h-9l1-8z' })]) })
+const IconTrendingUp = defineComponent({ render: () => h('svg', { fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', viewBox: '0 0 24 24' }, [h('polyline', { points: '23 6 13.5 15.5 8.5 10.5 1 18' }), h('polyline', { points: '17 6 23 6 23 12' })]) })
+const IconAward = defineComponent({ render: () => h('svg', { fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', viewBox: '0 0 24 24' }, [h('circle', { cx: '12', cy: '8', r: '6' }), h('path', { d: 'M15.477 12.89 17 22l-5-3-5 3 1.523-9.11' })]) })
+
+const { songs, loading, error, fetchSongs } = useSongs()
 
 await fetchSongs()
 
-const filtered = computed(() => {
-  let result = songs.value
-  if (diffFilter.value) result = result.filter((s) => s.difficulty === diffFilter.value)
-  const q = query.value.toLowerCase().trim()
-  if (q) result = result.filter((s) =>
-    s.title.toLowerCase().includes(q) ||
-    s.artist.toLowerCase().includes(q) ||
-    s.chords.some((c) => c.toLowerCase().includes(q))
-  )
-  return result
-})
+const recent = computed(() => songs.value.slice(0, 10))
+const sidebarSongs = computed(() => songs.value.slice(0, 12))
 
-function diffColor(d: string) {
-  return {
-    Beginner: 'bg-green-900/40 text-green-400',
-    Intermediate: 'bg-orange-900/40 text-orange-400',
-    Advanced: 'bg-red-900/40 text-red-400',
-  }[d] ?? 'bg-border text-muted'
+const stats = computed(() => [
+  { label: 'Total Songs', value: songs.value.length },
+  { label: 'Beginner', value: songs.value.filter((s) => s.difficulty === 'Beginner').length },
+  { label: 'Intermediate', value: songs.value.filter((s) => s.difficulty === 'Intermediate').length },
+  { label: 'Advanced', value: songs.value.filter((s) => s.difficulty === 'Advanced').length },
+])
+
+const collections = computed(() => [
+  { label: 'Your Most Played', icon: IconHeart,      bg: 'bg-gradient-to-br from-purple-600 to-indigo-700', filter: '',             count: songs.value.length },
+  { label: 'Most Popular',     icon: IconMusic,      bg: 'bg-gradient-to-br from-teal-500 to-cyan-700',    filter: '',             count: songs.value.length },
+  { label: 'Beginner',         icon: IconStar,       bg: 'bg-gradient-to-br from-green-500 to-emerald-700', filter: 'Beginner',    count: songs.value.filter((s) => s.difficulty === 'Beginner').length },
+  { label: 'Intermediate',     icon: IconZap,        bg: 'bg-gradient-to-br from-orange-500 to-red-600',   filter: 'Intermediate', count: songs.value.filter((s) => s.difficulty === 'Intermediate').length },
+  { label: 'Trending',         icon: IconTrendingUp, bg: 'bg-gradient-to-br from-pink-500 to-rose-700',    filter: '',             count: songs.value.length },
+  { label: 'Your Top Rated',   icon: IconAward,      bg: 'bg-gradient-to-br from-yellow-400 to-amber-600', filter: '',             count: songs.value.length },
+])
+
+function diffDot(d: string) {
+  return { Beginner: 'bg-green-500', Intermediate: 'bg-orange-500', Advanced: 'bg-red-500' }[d] ?? 'bg-border'
 }
 
-function confirmDelete(song: Song) { deleting.value = song }
-
-async function doDelete() {
-  if (!deleting.value) return
-  deleteLoading.value = true
-  await deleteSong(deleting.value.id)
-  deleteLoading.value = false
-  deleting.value = null
+function goToSongs(_filter: string) {
+  navigateTo('/songs')
 }
 </script>
+
+<style scoped>
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
