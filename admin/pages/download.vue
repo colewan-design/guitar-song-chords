@@ -3,8 +3,8 @@
     <!-- Minimal nav -->
     <nav class="border-b border-border px-6 h-14 flex items-center">
       <div class="flex items-center gap-2">
-        <img src="/icon.png" class="w-7 h-7" alt="Guitar Songs Chords" />
-        <span class="font-bold text-base tracking-tight">Guitar Songs Chords</span>
+        <img src="/icon.png" class="w-7 h-7" alt="Guitar Chords and Lyrics" />
+        <span class="font-bold text-base tracking-tight">Guitar Chords and Lyrics</span>
       </div>
     </nav>
 
@@ -31,9 +31,9 @@
         <!-- Release available -->
         <div v-else>
           <!-- App icon -->
-          <img src="/icon.png" class="w-24 h-24 rounded-3xl mx-auto mb-6" alt="Guitar Songs Chords" />
+          <img src="/icon.png" class="w-24 h-24 rounded-3xl mx-auto mb-6" alt="Guitar Chords and Lyrics" />
 
-          <h1 class="text-3xl font-bold text-white mb-1">Guitar Songs Chords</h1>
+          <h1 class="text-3xl font-bold text-white mb-1">Guitar Chords and Lyrics</h1>
           <p class="text-muted-light text-sm mb-6">Learn guitar songs with chords & lyrics</p>
 
           <!-- Meta pills -->
@@ -79,6 +79,15 @@
         </div>
       </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-border px-4 py-6 text-center">
+      <p class="text-muted text-xs space-x-4">
+        <NuxtLink to="/privacy" class="hover:text-muted-light transition-colors">Privacy Policy</NuxtLink>
+        <NuxtLink to="/terms" class="hover:text-muted-light transition-colors">Terms of Service</NuxtLink>
+        <NuxtLink to="/support" class="hover:text-muted-light transition-colors">Support</NuxtLink>
+      </p>
+    </footer>
   </div>
 </template>
 

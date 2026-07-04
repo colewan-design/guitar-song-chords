@@ -5,8 +5,8 @@
       <div class="max-w-7xl mx-auto px-6 h-16 flex items-center gap-6">
         <!-- Logo -->
         <NuxtLink to="/" class="flex items-center gap-2 shrink-0">
-          <img src="/icon.png" class="w-8 h-8" alt="Guitar Songs Chords" />
-          <span class="font-bold text-lg tracking-tight text-white">Guitar Songs Chords</span>
+          <img src="/icon.png" class="w-8 h-8" alt="Guitar Chords and Lyrics" />
+          <span class="font-bold text-lg tracking-tight text-white">Guitar Chords and Lyrics</span>
         </NuxtLink>
 
         <!-- Search -->

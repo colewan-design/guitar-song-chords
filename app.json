@@ -1,11 +1,16 @@
 {
   "expo": {
-    "name": "Guitar-Songs",
+    "name": "Guitar Chords and Lyrics",
     "slug": "Guitar-Songs",
     "scheme": "guitarsongs",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#0f0800"
+    },
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true
@@ -26,7 +31,30 @@
       }
     },
     "plugins": [
-      "expo-sqlite"
+      "expo-sqlite",
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#0f0800",
+          "image": "./assets/splash.png",
+          "resizeMode": "cover",
+          "imageWidth": 288
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone to record yourself playing."
+        }
+      ],
+      [
+        "react-native-audio-api",
+        {
+          "iosMicrophonePermission": "Allow $(PRODUCT_NAME) to access your microphone to record yourself playing.",
+          "androidPermissions": ["android.permission.MODIFY_AUDIO_SETTINGS"]
+        }
+      ]
     ]
   }
 }

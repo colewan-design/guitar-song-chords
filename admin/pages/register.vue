@@ -4,8 +4,8 @@
 
       <!-- Logo -->
       <div class="flex items-center justify-center gap-2 mb-8">
-        <img src="/icon.png" class="w-9 h-9" alt="Guitar Songs Chords" />
-        <span class="font-bold text-xl tracking-tight text-white">Guitar Songs Chords</span>
+        <img src="/icon.png" class="w-9 h-9" alt="Guitar Chords and Lyrics" />
+        <span class="font-bold text-xl tracking-tight text-white">Guitar Chords and Lyrics</span>
       </div>
 
       <!-- Step 1: Email + Password -->
