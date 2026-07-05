@@ -30,3 +30,15 @@ CREATE TRIGGER songs_updated_at
 -- Allow public read/write (tighten later with RLS if needed)
 ALTER TABLE songs ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow all" ON songs FOR ALL USING (true) WITH CHECK (true);
+
+-- Closed-testing access requests collected from the public download page.
+-- Emails here get added by hand to the Play Console closed-testing tester list.
+CREATE TABLE IF NOT EXISTS access_requests (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  email TEXT NOT NULL UNIQUE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE access_requests ENABLE ROW LEVEL SECURITY;
+-- No public policies: only the service-role key (used server-side in
+-- request-access.post/get.ts) can read or write this table.

@@ -17,17 +17,6 @@
           <div class="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
         </div>
 
-        <!-- No release yet -->
-        <div v-else-if="!release?.apk_url" class="py-20">
-          <div class="w-16 h-16 bg-surface border border-border rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-muted" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/>
-            </svg>
-          </div>
-          <p class="text-muted-light font-medium">No release available yet</p>
-          <p class="text-muted text-sm mt-1">Check back soon.</p>
-        </div>
-
         <!-- Release available -->
         <div v-else>
           <!-- App icon -->
@@ -38,41 +27,53 @@
 
           <!-- Meta pills -->
           <div class="flex items-center justify-center gap-2 flex-wrap mb-8">
-            <span class="bg-surface border border-border text-muted-light text-xs px-3 py-1.5 rounded-full font-medium">
+            <span v-if="release?.version" class="bg-surface border border-border text-muted-light text-xs px-3 py-1.5 rounded-full font-medium">
               v{{ release.version }}
             </span>
-            <span v-if="release.file_size" class="bg-surface border border-border text-muted-light text-xs px-3 py-1.5 rounded-full font-medium">
-              {{ release.file_size }}
-            </span>
             <span class="bg-surface border border-border text-muted-light text-xs px-3 py-1.5 rounded-full font-medium">
-              Android APK
+              Closed Testing
             </span>
           </div>
 
-          <!-- Download count -->
+          <!-- Requested access count -->
           <div class="bg-surface border border-border rounded-2xl p-6 mb-6 inline-block min-w-48">
-            <p class="text-4xl font-bold text-white mb-0.5">{{ formatCount(localCount) }}</p>
-            <p class="text-muted text-sm">total downloads</p>
+            <p class="text-4xl font-bold text-white mb-0.5">{{ formatCount(requestCount) }}</p>
+            <p class="text-muted text-sm">people requested access</p>
           </div>
 
-          <!-- Download button -->
+          <!-- Request access form -->
           <div class="mb-6">
-            <button
-              @click="handleDownload"
-              :disabled="downloading"
-              class="w-full flex items-center justify-center gap-3 bg-accent hover:bg-accent-dark disabled:opacity-60 text-black font-bold py-4 px-6 rounded-2xl text-base transition-colors"
-            >
-              <svg v-if="!downloading" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
-              </svg>
-              <div v-else class="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
-              {{ downloading ? 'Preparing download…' : 'Download APK' }}
-            </button>
-            <p class="text-muted text-xs mt-3">Android only · Enable "Install unknown apps" before installing</p>
+            <p class="text-muted-light text-sm mb-4">
+              The app is currently in closed testing on the Play Store. Drop your email and we'll add you as a tester and send you the invite link.
+            </p>
+
+            <div v-if="requested" class="bg-surface border border-border rounded-2xl p-5">
+              <p class="text-white font-medium">You're on the list!</p>
+              <p class="text-muted text-sm mt-1">We'll email you an invite once you've been added as a tester.</p>
+            </div>
+
+            <form v-else @submit.prevent="handleRequestAccess" class="flex flex-col gap-3">
+              <input
+                v-model="email"
+                type="email"
+                required
+                placeholder="you@example.com"
+                class="w-full bg-surface border border-border rounded-2xl px-5 py-4 text-base text-white placeholder-muted focus:outline-none focus:border-accent"
+              />
+              <button
+                type="submit"
+                :disabled="submitting"
+                class="w-full flex items-center justify-center gap-3 bg-accent hover:bg-accent-dark disabled:opacity-60 text-black font-bold py-4 px-6 rounded-2xl text-base transition-colors"
+              >
+                <div v-if="submitting" class="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                {{ submitting ? 'Submitting…' : 'Request Access' }}
+              </button>
+              <p v-if="requestError" class="text-red-400 text-xs">{{ requestError }}</p>
+            </form>
           </div>
 
           <!-- Changelog -->
-          <div v-if="release.changelog" class="bg-surface border border-border rounded-2xl p-5 text-left">
+          <div v-if="release?.changelog" class="bg-surface border border-border rounded-2xl p-5 text-left">
             <h3 class="text-xs font-bold uppercase tracking-widest text-muted-light mb-3">What's New in v{{ release.version }}</h3>
             <p class="text-sm text-muted-light whitespace-pre-line leading-relaxed">{{ release.changelog }}</p>
           </div>
@@ -95,22 +96,34 @@
 definePageMeta({ layout: false })
 
 const { release, loading, fetchRelease } = useRelease()
-const downloading = ref(false)
-const localCount = ref(0)
+const email = ref('')
+const submitting = ref(false)
+const requested = ref(false)
+const requestError = ref<string | null>(null)
+const requestCount = ref(0)
 
 await fetchRelease()
-localCount.value = release.value?.download_count ?? 0
+try {
+  const { count } = await $fetch<{ count: number }>('/api/request-access')
+  requestCount.value = count
+} catch {
+  // Non-critical — just leave the count at 0 if this fails.
+}
 
-async function handleDownload() {
-  downloading.value = true
+async function handleRequestAccess() {
+  submitting.value = true
+  requestError.value = null
   try {
-    const { url } = await $fetch<{ url: string }>('/api/download', { method: 'POST' })
-    localCount.value += 1
-    window.location.href = url
+    const { count } = await $fetch<{ success: boolean; count: number }>('/api/request-access', {
+      method: 'POST',
+      body: { email: email.value },
+    })
+    requestCount.value = count
+    requested.value = true
   } catch (e: any) {
-    alert(e?.data?.message ?? 'Download failed. Please try again.')
+    requestError.value = e?.data?.message ?? 'Something went wrong. Please try again.'
   } finally {
-    downloading.value = false
+    submitting.value = false
   }
 }
 
