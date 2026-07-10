@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
       <div>
         <h1 class="text-2xl font-bold">Testers</h1>
         <p class="text-muted text-sm mt-1">{{ requests.length }} people requested access</p>

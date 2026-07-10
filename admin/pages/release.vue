@@ -7,8 +7,8 @@
     </div>
 
     <!-- Download stats -->
-    <div class="grid grid-cols-3 gap-4 mb-8">
-      <div class="bg-surface border border-border rounded-2xl p-5 col-span-1">
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+      <div class="bg-surface border border-border rounded-2xl p-5 col-span-2 sm:col-span-1">
         <p class="text-muted text-xs font-semibold uppercase tracking-wider mb-1">Total Downloads</p>
         <p class="text-3xl font-bold text-white">{{ formatCount(release?.download_count ?? 0) }}</p>
       </div>

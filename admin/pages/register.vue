@@ -9,7 +9,7 @@
       </div>
 
       <!-- Step 1: Email + Password -->
-      <div v-if="step === 1" class="bg-surface border border-border rounded-2xl p-8">
+      <div v-if="step === 1" class="bg-surface border border-border rounded-2xl p-6 sm:p-8">
         <h1 class="text-xl font-bold text-white mb-1">Create account</h1>
         <p class="text-muted text-sm mb-6">Enter your email and password to get started</p>
 
@@ -57,7 +57,7 @@
       </div>
 
       <!-- Step 2: OTP Verification -->
-      <div v-else-if="step === 2" class="bg-surface border border-border rounded-2xl p-8">
+      <div v-else-if="step === 2" class="bg-surface border border-border rounded-2xl p-6 sm:p-8">
         <button @click="step = 1" class="flex items-center gap-1 text-muted hover:text-white text-sm mb-6 transition-colors">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
@@ -79,7 +79,7 @@
         <form @submit.prevent="handleVerify" class="space-y-4">
           <div>
             <label class="block text-xs font-semibold text-muted-light uppercase tracking-wider mb-3">Verification code</label>
-            <div class="flex gap-2 justify-between">
+            <div class="flex gap-1.5 xs:gap-2 justify-between">
               <input
                 v-for="(_, i) in otp"
                 :key="i"
@@ -91,7 +91,7 @@
                 @input="onOtpInput(i, $event)"
                 @keydown.backspace="onOtpBackspace(i)"
                 @paste.prevent="onOtpPaste($event)"
-                class="w-11 h-14 text-center text-xl font-bold bg-card border border-border rounded-xl text-white focus:outline-none focus:border-accent/60 transition-colors"
+                class="flex-1 min-w-0 max-w-11 aspect-square text-center text-xl font-bold bg-card border border-border rounded-xl text-white focus:outline-none focus:border-accent/60 transition-colors"
               />
             </div>
           </div>

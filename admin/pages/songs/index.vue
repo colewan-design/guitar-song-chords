@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
       <div>
         <h1 class="text-2xl font-bold">All Songs</h1>
         <p class="text-muted text-sm mt-1">{{ filtered.length }} of {{ songs.length }} songs</p>
@@ -11,7 +11,7 @@
     </div>
 
     <!-- Search + filter -->
-    <div class="flex gap-3 mb-6">
+    <div class="flex flex-col sm:flex-row gap-3 mb-6">
       <div class="relative flex-1">
         <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-muted w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
@@ -23,12 +23,12 @@
           class="w-full bg-surface border border-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-muted focus:outline-none focus:border-accent/50 transition-colors"
         />
       </div>
-      <div class="flex items-center gap-1 bg-surface border border-border rounded-xl px-1 py-1">
+      <div class="flex items-center gap-1 bg-surface border border-border rounded-xl px-1 py-1 overflow-x-auto">
         <button
           v-for="d in ['Beginner', 'Intermediate', 'Advanced']"
           :key="d"
           @click="diffFilter = d === diffFilter ? '' : d"
-          :class="['text-xs px-3 py-1.5 rounded-lg font-medium transition-colors', diffFilter === d ? 'bg-accent text-black' : 'text-muted hover:text-white']"
+          :class="['shrink-0 text-xs px-3 py-1.5 rounded-lg font-medium transition-colors', diffFilter === d ? 'bg-accent text-black' : 'text-muted hover:text-white']"
         >
           {{ d }}
         </button>

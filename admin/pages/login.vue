@@ -7,7 +7,7 @@
         <span class="font-bold text-xl tracking-tight text-white">Guitar Chords and Lyrics</span>
       </div>
 
-      <div class="bg-surface border border-border rounded-2xl p-8">
+      <div class="bg-surface border border-border rounded-2xl p-6 sm:p-8">
         <h1 class="text-xl font-bold text-white mb-1">Welcome back</h1>
         <p class="text-muted text-sm mb-6">Sign in to your admin account</p>
 
