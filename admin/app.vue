@@ -27,6 +27,7 @@
         <!-- Nav links -->
         <div class="flex items-center gap-4 text-sm font-medium ml-auto">
           <NuxtLink to="/songs" class="text-muted-light hover:text-white transition-colors">Songs</NuxtLink>
+          <NuxtLink to="/testers" class="text-muted-light hover:text-white transition-colors">Testers</NuxtLink>
           <NuxtLink to="/download" class="text-muted-light hover:text-white transition-colors">Download</NuxtLink>
           <NuxtLink to="/songs/add" class="bg-accent hover:bg-accent-dark text-black px-5 py-2 rounded-full font-semibold transition-colors text-sm">
             + Add Song

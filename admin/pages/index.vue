@@ -143,6 +143,37 @@
             </div>
           </div>
         </section>
+
+        <!-- TESTERS -->
+        <section class="mt-10">
+          <div class="flex items-center justify-between mb-5">
+            <h2 class="text-xs font-bold uppercase tracking-widest text-muted-light">Closed Testing</h2>
+            <NuxtLink to="/testers" class="text-xs font-bold tracking-widest text-accent hover:text-accent-dark transition-colors">MANAGE</NuxtLink>
+          </div>
+
+          <div class="bg-surface border border-border rounded-2xl p-5 flex items-center gap-5">
+            <div class="w-14 h-14 bg-gradient-to-br from-accent/30 to-accent/10 border border-accent/20 rounded-2xl flex items-center justify-center shrink-0">
+              <svg class="w-7 h-7 text-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
+              </svg>
+            </div>
+
+            <div class="flex-1 min-w-0">
+              <div class="flex items-baseline gap-2 mb-0.5">
+                <span class="text-2xl font-bold text-white">{{ testerCount }}</span>
+                <span class="text-muted text-sm">access requests</span>
+              </div>
+              <p class="text-xs text-muted-light">Emails waiting to be added to the Play Console tester list</p>
+            </div>
+
+            <NuxtLink
+              to="/testers"
+              class="shrink-0 text-xs bg-accent hover:bg-accent-dark text-black px-3 py-2 rounded-xl font-semibold transition-colors"
+            >
+              View list
+            </NuxtLink>
+          </div>
+        </section>
       </div>
 
       <!-- Right sidebar -->
@@ -201,8 +232,13 @@ const IconAward = defineComponent({ render: () => h('svg', { fill: 'none', strok
 
 const { songs, loading, error, fetchSongs } = useSongs()
 const { release, fetchRelease } = useRelease()
+const testerCount = ref(0)
 
-await Promise.all([fetchSongs(), fetchRelease()])
+await Promise.all([
+  fetchSongs(),
+  fetchRelease(),
+  $fetch<{ count: number }>('/api/request-access').then((r) => { testerCount.value = r.count }).catch(() => {}),
+])
 
 const recent = computed(() => songs.value.slice(0, 10))
 const sidebarSongs = computed(() => songs.value.slice(0, 12))
