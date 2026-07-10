@@ -76,7 +76,7 @@ async function handleLogin() {
   if (error) {
     errorMsg.value = error.message
   } else {
-    await navigateTo('/')
+    window.location.href = '/'
   }
 }
 </script>

@@ -171,7 +171,7 @@ async function handleVerify() {
     otp.value = ['', '', '', '', '', '']
     nextTick(() => otpRefs.value[0]?.focus())
   } else {
-    await navigateTo('/')
+    window.location.href = '/'
   }
 }
 
