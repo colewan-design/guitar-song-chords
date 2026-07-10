@@ -1,13 +1,13 @@
 import { createClient } from '@supabase/supabase-js'
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const GMAIL_RE = /^[^\s@]+@(gmail\.com|googlemail\.com)$/
 
 export default defineEventHandler(async (event) => {
   const body = await readBody<{ email?: string }>(event)
   const email = body?.email?.trim().toLowerCase()
 
-  if (!email || !EMAIL_RE.test(email)) {
-    throw createError({ statusCode: 400, message: 'Enter a valid email address.' })
+  if (!email || !GMAIL_RE.test(email)) {
+    throw createError({ statusCode: 400, message: 'Enter a valid Gmail address — Play Console testing requires a Google account.' })
   }
 
   const supabase = createClient(
